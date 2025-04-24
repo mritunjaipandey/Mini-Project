@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Student Enrollment Form</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-5">Student Enrollment Form</h2>
+        <form id="enrollmentForm">
+            <div class="form-group">
+                <label for="rollNo">Roll No:</label>
+                <input type="text" class="form-control" id="rollNo" required>
+            </div>
+            <div class="form-group">
+                <label for="fullName">Full Name:</label>
+                <input type="text" class="form-control" id="fullName" required>
+            </div>
+            <div class="form-group">
+                <label for="class">Class:</label>
+                <input type="text" class="form-control" id="class" required>
+            </div>
+            <div class="form-group">
+                <label for="birthDate">Birth Date:</label>
+                <input type="date" class="form-control" id="birthDate" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea class="form-control" id="address" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="enrollmentDate">Enrollment Date:</label>
+                <input type="date" class="form-control" id="enrollmentDate" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("enrollmentForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            var rollNo = document.getElementById("rollNo").value;
+            var fullName = document.getElementById("fullName").value;
+            var className = document.getElementById("class").value;
+            var birthDate = document.getElementById("birthDate").value;
+            var address = document.getElementById("address").value;
+            var enrollmentDate = document.getElementById("enrollmentDate").value;
+
+            var jsonObj = {
+                "Roll-No": rollNo,
+                "Full-Name": fullName,
+                "Class": className,
+                "Birth-Date": birthDate,
+                "Address": address,
+                "Enrollment-Date": enrollmentDate
+            };
+
+            var connToken = "90934753|-31949209160651816|90955938"; 
+            var dbName = "SCHOOL-DB";
+            var relName = "STUDENT-TABLE";
+            var putRequest = createPUTRequest(connToken, JSON.stringify(jsonObj), dbName, relName);
+            
+            executeCommand(putRequest, "/api/iml");
+        });
+
+        function executeCommand(reqString, apiEndPointUrl) {
+            var url = "http://api.login2explore.com:5577" + "/api/iml";
+            $.post(url, reqString, function (result) {
+                var jsonObj = JSON.parse(result);
+                alert("Data submitted successfully!");
+            }).fail(function (result) {
+                var dataJsonObj = result.responseText;
+                var jsonObj = JSON.parse(dataJsonObj);
+                alert("Error: " + jsonObj.message);
+            });
+        }
+
+        function createPUTRequest(connToken, jsonObj, dbName, relName) {
+            var putRequest = "{\n" 
+            + "\"token\" : \"" 
+            + connToken 
+            + "\"," 
+            + "\"dbName\": \"" 
+            + dbName 
+            + "\",\n" + "\"cmd\" : \"PUT\",\n" 
+            + "\"rel\" : \"" 
+            + relName + "\"," 
+            + "\"jsonStr\": \n" 
+            + jsonObj 
+            + "\n" 
+            + "}";
+            return putRequest;
+        }
+
+        function resetForm() {
+            document.getElementById("enrollmentForm").reset();
+        }
+    </script>
+</body>
+</html>
